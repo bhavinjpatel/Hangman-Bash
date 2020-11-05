@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cat ./hangman.txt
+cat ./assets/hangman.txt
 
 USERMENU="
 Welcome, please select an option listed down below:
