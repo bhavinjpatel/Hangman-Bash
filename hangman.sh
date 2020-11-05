@@ -16,13 +16,32 @@ USEROPTIONS="
 3) Contribution Details
 4) Quit
 "
-echo "$USERMENU"
-read -p "Please enter an option: " USEROPTION
+menu () {
 
-while [[ ( -z "$USEROPTION") || (! "$USEROPTION" =~ ^[1-4]{1}$) ]];
-do
-	echo "$USEROPTION is not a valid option."
-	echo "$USEROPTIONS"
+	echo "$USERMENU"
 	read -p "Please enter an option: " USEROPTION
-done
-echo "$USEROPTION"
+
+	while [[ ( -z "$USEROPTION") || (! "$USEROPTION" =~ ^[1-4]{1}$) ]];
+	do
+		echo "$USEROPTION is not a valid option."
+		echo "$USEROPTIONS"
+		read -p "Please enter an option: " USEROPTION
+	done
+return
+}
+display_menus () {
+
+if [[ "$USEROPTION" -eq 1 ]]; then
+	WORD=$(shuf ./assets/words.txt | head -n 1)
+	echo $WORD
+elif [[ "$USEROPTION" -eq 2 ]]; then
+	echo "Help Menu:"
+elif [[ "$USEROPTION" -eq 3 ]]; then
+	echo "Project by: Bhavin Patel, Christian Santana, and Dylan Klintworth"
+else
+	echo "Quitting hangman"
+	exit 1
+fi
+return
+}
+menu
