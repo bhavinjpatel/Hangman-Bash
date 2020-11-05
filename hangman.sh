@@ -18,9 +18,12 @@ USEROPTIONS="
 "
 go_back () {
 	read -p "Enter 'gb' to go back: " GB
-	if [[ "$GB" == "gb" ]]; then
-		display_menus
-	fi
+	while [[ ( -z "$GB" ) || (! "$GB" =~ ^gb$) ]];
+	do
+		echo "$GB is not a valid entry."
+		read -p "Enter 'gb' to go back: " GB
+	done
+	display_menus
 }
 display_menus () {
 
@@ -34,8 +37,7 @@ do
 	read -p "Please enter an option: " USEROPTION
 done
 if [[ "$USEROPTION" -eq 1 ]]; then
-	WORD=$(shuf ./assets/words.txt | head -n 1)
-	echo $WORD
+	play
 	go_back
 elif [[ "$USEROPTION" -eq 2 ]]; then
 	echo "Help Menu:"
@@ -48,4 +50,15 @@ else
 	exit 1
 fi
 }
+play () {
+	LIFECOUNT=6
+	WORD=$(shuf ./assets/words.txt | head -n 1)
+	echo "$WORD"
+	WORDLENGTH="$(( $(echo "$WORD" | wc -m) - 2 ))"
+	echo "$WORDLENGTH"
+	echo -e "The word is $WORDLENGTH letters long...\nYou have 6 chances"
+	read -p "Enter Letter: " LETTER
+	echo "$WORD" | grep $LETTER
+}
+
 display_menus
