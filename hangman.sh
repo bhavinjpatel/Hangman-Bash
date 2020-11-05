@@ -6,14 +6,14 @@ USERMENU="
 Welcome, please select an option listed down below:
 
 1) Play Hangman
-2) See Contribution Details
-3) See Help Menu
+2) Help
+3) Contribution Details
 4) Quit
 "
 USEROPTIONS="
 1) Play Hangman
-2) See Contribution Details
-3) See Help Menu
+2) Help
+3) Contribution Details
 4) Quit
 "
 echo "$USERMENU"
