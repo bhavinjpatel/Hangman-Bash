@@ -2,6 +2,117 @@
 
 cat ./assets/hangman.txt
 
+Intro="
+  +---+
+
+  |   |
+
+      |
+
+      |
+
+      |
+
+      |
+
+=========
+"
+
+wrong1="
+  +---+
+
+  |   |
+
+  O   |
+
+      |
+
+      |
+
+      |
+
+=========
+"
+
+wrong2="
+  +---+
+
+  |   |
+
+  O   |
+
+  |   |
+
+      |
+
+      |
+
+=========
+"
+
+wrong3="
+  +---+
+
+  |   |
+
+  O   |
+
+ /|   |
+
+      |
+
+      |
+
+=========
+"
+wrong4="
+  +---+
+
+  |   |
+
+  O   |
+
+ /|\  |
+
+      |
+
+      |
+
+=========
+"
+
+wrong5="
+  +---+
+
+  |   |
+
+  O   |
+
+ /|\  |
+
+ /    |
+
+      |
+
+=========
+"
+
+wrong6="
+  +---+
+
+  |   |
+
+  O   |
+
+ /|\  |
+
+ / \  |
+
+      |
+
+=========
+"
+
 USERMENU="
 Welcome, please select an option listed down below:
 
@@ -40,7 +151,8 @@ if [[ "$USEROPTION" -eq 1 ]]; then
 	play
 	go_back
 elif [[ "$USEROPTION" -eq 2 ]]; then
-	echo "Help Menu:"
+	echo "Help Menu:
+	Guess the word."
 	go_back
 elif [[ "$USEROPTION" -eq 3 ]]; then
 	echo "Project by: Bhavin Patel, Christian Santana, and Dylan Klintworth"
@@ -52,13 +164,36 @@ fi
 }
 play () {
 	LIFECOUNT=6
+	LETTERS=""
 	WORD=$(shuf ./assets/words.txt | head -n 1)
-	echo "$WORD"
+	echo "$Intro"
 	WORDLENGTH="$(( $(echo "$WORD" | wc -m) - 2 ))"
-	echo "$WORDLENGTH"
-	echo -e "The word is $WORDLENGTH letters long...\nYou have 6 chances"
-	read -p "Enter Letter: " LETTER
+	while [[ "$LIFECOUNT" -gt 0 ]];
+	do
+		scene
+	done
+	echo "$wrong6"
+	echo "$LIFECOUNT lives. You lost! Word was: $WORD"
 	echo "$WORD" | grep $LETTER
+}
+
+scene () {
+	if [[ "$LIFECOUNT" -eq 5 ]]; then
+		echo "$wrong1"
+	elif [[ "$LIFECOUNT" -eq 4 ]]; then
+		echo "$wrong2"
+	elif [[ "$LIFECOUNT" -eq 3 ]]; then
+		echo "$wrong3"
+	elif [[ "$LIFECOUNT" -eq 2 ]]; then
+		echo "$wrong4"
+	elif [[ "$LIFECOUNT" -eq 1 ]]; then
+		echo "$wrong5"
+	fi
+	echo -e "The word is $WORDLENGTH letters long...\nYou have"  $LIFECOUNT "chances"
+	read -p "Enter Letter: " LETTER
+	let LIFECOUNT-=1 
+	LETTERS="${LETTERS}${LETTER}"
+	echo $LETTERS
 }
 
 display_menus
