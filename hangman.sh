@@ -164,10 +164,12 @@ fi
 }
 play () {
 	LIFECOUNT=6
-	LETTERS=""
-	WORD=$(shuf ./assets/words.txt | head -n 1)
+	declare -a LETTERS
+	WORD=$(shuf ./assets/words.txt | head -n 1 | tr -d "$")
 	echo "$Intro"
-	WORDLENGTH="$(( $(echo "$WORD" | wc -m) - 2 ))"
+	echo "$WORD"
+	WORDLENGTH="${#WORD}"
+	echo -e "The word is $WORDLENGTH letters long...\nYou have"  $LIFECOUNT "chances"
 	while [[ "$LIFECOUNT" -gt 0 ]];
 	do
 		scene
@@ -178,14 +180,29 @@ play () {
 }
 letter_validation () {
 	read -p "Enter Letter: " LETTER
-	while [[ ! "$LETTER" =~ "^[A-Za-z]{1}$" ]]; 
+	while [[ ! "$LETTER" =~ ^[A-Za-z]{1}$ ]]; 
 	do
 		echo "$LETTER is not a letter."
 		read -p "Enter letter: " LETTER
 	done
 	echo "$LETTER"
 }
+letter_contained () {
+	if [[ "$WORD" == *"$LETTER"* ]]; then
+		echo "$LETTER is in $WORD"
+		for letter in $WORD; do
+			echo -n "$letter"
+		done
+		for letter in $LETTERS; do
+			echo -n "$letter"
+		done
+	else
+		let LIFECOUNT-=1
+	fi
+}
 scene () {
+	letter_validation
+	letter_contained
 	if [[ "$LIFECOUNT" -eq 5 ]]; then
 		echo "$wrong1"
 		letter_validation
@@ -202,12 +219,11 @@ scene () {
 		echo "$wrong5"
 		letter_validation
 	fi
-	echo -e "The word is $WORDLENGTH letters long...\nYou have"  $LIFECOUNT "chances"
+	
 	
 	echo $
 	let LIFECOUNT-=1 
-	LETTERS="${LETTERS}${LETTER}"
-	echo $LETTERS
+	
 }
 
 display_menus
