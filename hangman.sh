@@ -206,24 +206,24 @@ scene () {
 	if [[ "$LIFECOUNT" -eq 5 ]]; then
 		echo "$wrong1"
 		letter_validation
+		letter_contained
 	elif [[ "$LIFECOUNT" -eq 4 ]]; then
 		echo "$wrong2"
 		letter_validation
+		letter_contained
 	elif [[ "$LIFECOUNT" -eq 3 ]]; then
 		echo "$wrong3"
 		letter_validation
+		letter_contained
 	elif [[ "$LIFECOUNT" -eq 2 ]]; then
 		echo "$wrong4"
 		letter_validation
+		letter_contained
 	elif [[ "$LIFECOUNT" -eq 1 ]]; then
 		echo "$wrong5"
 		letter_validation
+		letter_contained
 	fi
-	
-	
-	echo $
-	let LIFECOUNT-=1 
-	
 }
 
 display_menus
