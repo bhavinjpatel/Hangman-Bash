@@ -174,23 +174,37 @@ play () {
 	done
 	echo "$wrong6"
 	echo "$LIFECOUNT lives. You lost! Word was: $WORD"
-	echo "$WORD" | grep $LETTER
+	
 }
-
+letter_validation () {
+	read -p "Enter Letter: " LETTER
+	while [[ ! "$LETTER" =~ "^[A-Za-z]{1}$" ]]; 
+	do
+		echo "$LETTER is not a letter."
+		read -p "Enter letter: " LETTER
+	done
+	echo "$LETTER"
+}
 scene () {
 	if [[ "$LIFECOUNT" -eq 5 ]]; then
 		echo "$wrong1"
+		letter_validation
 	elif [[ "$LIFECOUNT" -eq 4 ]]; then
 		echo "$wrong2"
+		letter_validation
 	elif [[ "$LIFECOUNT" -eq 3 ]]; then
 		echo "$wrong3"
+		letter_validation
 	elif [[ "$LIFECOUNT" -eq 2 ]]; then
 		echo "$wrong4"
+		letter_validation
 	elif [[ "$LIFECOUNT" -eq 1 ]]; then
 		echo "$wrong5"
+		letter_validation
 	fi
 	echo -e "The word is $WORDLENGTH letters long...\nYou have"  $LIFECOUNT "chances"
-	read -p "Enter Letter: " LETTER
+	
+	echo $
 	let LIFECOUNT-=1 
 	LETTERS="${LETTERS}${LETTER}"
 	echo $LETTERS
