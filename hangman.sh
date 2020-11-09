@@ -167,7 +167,6 @@ play () {
 	LETTERS=""
 	WORD=$(shuf ./assets/words.txt | head -n 1 | tr -d "$")
 	echo "$Intro"
-	echo "$WORD"
 	WORDLENGTH="${#WORD}"
 	echo -e "The word is $WORDLENGTH letters long...\nYou have"  $LIFECOUNT "chances"
 	while [[ "$LIFECOUNT" -gt 0 ]];
@@ -188,12 +187,30 @@ letter_validation () {
 }
 letter_contained () {
 	if [[ "$WORD" == *"$LETTER"* ]]; then
-		echo "${LETTER} is in ${WORD}"
+		echo "$LETTER is in the word."
+		LETTERS="$LETTERS$LETTER"
+		echo "$LETTERS"
+		for (( i=0; i < $WORDLENGTH; i++ ))
+		do
+			if [[ "$LETTER" == "${WORD:i:1}" ]]; then
+				echo
+			fi
+		done
+		unset i
 	else
 		let LIFECOUNT-=1
+		echo "$LETTER is not in the word"
 	fi
 }
+print_underscores () {
+	for (( i=0;  i<$WORDLENGTH; i++ ))
+	do
+		echo -n "_ "
+	done
+	echo -e "\n" 
+}
 scene () {
+	print_underscores
 	letter_validation
 	letter_contained
 	if [[ "$LIFECOUNT" -eq 5 ]]; then
