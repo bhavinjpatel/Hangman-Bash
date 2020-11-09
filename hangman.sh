@@ -164,7 +164,7 @@ fi
 }
 play () {
 	LIFECOUNT=6
-	declare -a LETTERS
+	LETTERS=""
 	WORD=$(shuf ./assets/words.txt | head -n 1 | tr -d "$")
 	echo "$Intro"
 	echo "$WORD"
@@ -185,17 +185,10 @@ letter_validation () {
 		echo "$LETTER is not a letter."
 		read -p "Enter letter: " LETTER
 	done
-	echo "$LETTER"
 }
 letter_contained () {
 	if [[ "$WORD" == *"$LETTER"* ]]; then
-		echo "$LETTER is in $WORD"
-		for letter in $WORD; do
-			echo -n "$letter"
-		done
-		for letter in $LETTERS; do
-			echo -n "$letter"
-		done
+		echo "${LETTER} is in ${WORD}"
 	else
 		let LIFECOUNT-=1
 	fi
