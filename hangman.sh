@@ -165,7 +165,8 @@ fi
 play () {
 	LIFECOUNT=6
 	LETTERS=""
-	WORD=$(shuf ./assets/words.txt | head -n 1 | tr -d "$")
+	WORD=$(shuf ./assets/words.txt | head -n 1)
+	WORD=${WORD::-1}
 	echo "$Intro"
 	WORDLENGTH="${#WORD}"
 	echo -e "The word is $WORDLENGTH letters long...\nYou have"  $LIFECOUNT "chances"
@@ -178,6 +179,7 @@ play () {
 	
 }
 letter_validation () {
+	echo $WORD
 	read -p "Enter Letter: " LETTER
 	while [[ ! "$LETTER" =~ ^[A-Za-z]{1}$ ]]; 
 	do
@@ -189,31 +191,23 @@ letter_contained () {
 	if [[ "$WORD" == *"$LETTER"* ]]; then
 		echo "$LETTER is in the word."
 		LETTERS="$LETTERS$LETTER"
-		echo "$LETTERS"
-		for (( i=0; i < $WORDLENGTH; i++ ))
-		do
-			if [[ "$LETTER" == "${WORD:i:1}" ]]; then
-				echo
-			fi
-		done
-		unset i
+		python ./print_letters.py $WORD $LETTERS	
 	else
 		let LIFECOUNT-=1
 		echo "$LETTER is not in the word"
+		let LETTERSLENGTH=${#LETTERS}
+		if [[ $LETTERSLENGTH -ne  0 ]]; then
+			python ./print_letters.py $WORD $LETTERS
+		else
+			python ./print_underscores.py $WORD
+		fi
 	fi
 }
-print_underscores () {
-	for (( i=0;  i<$WORDLENGTH; i++ ))
-	do
-		echo -n "_ "
-	done
-	echo -e "\n" 
-}
 scene () {
-	print_underscores
-	letter_validation
-	letter_contained
-	if [[ "$LIFECOUNT" -eq 5 ]]; then
+	if [[ $LIFECOUNT -eq 6 ]]; then
+		letter_validation
+		letter_contained
+	elif [[ "$LIFECOUNT" -eq 5 ]]; then
 		echo "$wrong1"
 		letter_validation
 		letter_contained
