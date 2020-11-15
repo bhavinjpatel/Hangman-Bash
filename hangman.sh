@@ -1,5 +1,8 @@
 #!/bin/bash
-
+if ! type python &> /dev/null; then
+	echo "You do not have python installed. Please install python and create a symbolic link for it with the command 'sudo ln -s /usr/bin/python[version] /usr/bin/python'"
+	exit 1
+fi
 cat ./assets/hangman.txt
 
 Intro="
