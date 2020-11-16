@@ -152,7 +152,6 @@ do
 done
 if [[ "$USEROPTION" -eq 1 ]]; then
 	play
-	go_back
 elif [[ "$USEROPTION" -eq 2 ]]; then
 	echo "Help Menu:
 	Guess the word."
@@ -179,7 +178,18 @@ play () {
 	done
 	echo "$wrong6"
 	echo "$LIFECOUNT lives. You lost! Word was: $WORD"
-	
+	read -p "Play again? Enter y/n." Reset
+	while [[ ( -z "$Reset" ) || (!( "$Reset" == "y" ||  "$Reset" == "n")) ]];
+	do
+		echo "Not a valid entry. Please enter y/n."
+		read Reset
+	done
+	if [[ "$Reset" == "y" ]]; then
+		play
+	else
+		display_menus
+	fi
+
 }
 letter_validation () {
 	echo $WORD
