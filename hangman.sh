@@ -115,7 +115,7 @@ wrong6="
 
 =========
 "
-
+Guesses=""
 USERMENU="
 Welcome, please select an option listed down below:
 
@@ -167,6 +167,7 @@ fi
 play () {
 	LIFECOUNT=6
 	LETTERS=""
+	Guess=""
 	WORD=$(shuf ./assets/words.txt | head -n 1)
 	WORD=${WORD::-1}
 	echo "$Intro"
@@ -199,6 +200,7 @@ letter_validation () {
 		echo "$LETTER is not a letter."
 		read -p "Enter letter: " LETTER
 	done
+	Guess="${Guess} ${LETTER}"
 }
 letter_contained () {
 	if [[ "$WORD" == *"$LETTER"* ]]; then
@@ -215,6 +217,7 @@ letter_contained () {
 			python ./print_underscores.py $WORD
 		fi
 	fi
+	echo $Guess
 }
 scene () {
 	if [[ $LIFECOUNT -eq 6 ]]; then
