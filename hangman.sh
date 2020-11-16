@@ -179,13 +179,13 @@ play () {
 	done
 	echo "$wrong6"
 	echo "$LIFECOUNT lives. You lost! Word was: $WORD"
-	read -p "Play again? Enter y/n." Reset
-	while [[ ( -z "$Reset" ) || (!( "$Reset" == "y" ||  "$Reset" == "n")) ]];
+	read -p "Play again? Enter y/n: " RESET
+	while [[ ( -z "$RESET" ) || (!( "$RESET" == "y" ||  "$RESET" == "n")) ]];
 	do
 		echo "Not a valid entry. Please enter y/n."
-		read Reset
+		read RESET
 	done
-	if [[ "$Reset" == "y" ]]; then
+	if [[ "$RESET" == "y" ]]; then
 		play
 	else
 		display_menus
@@ -201,6 +201,7 @@ letter_validation () {
 		read -p "Enter letter: " LETTER
 	done
 	Guess="${Guess} ${LETTER}"
+	Guess=$(echo "$Guess" | grep -o . | sort | tr -d "\n")
 }
 letter_contained () {
 	if [[ "$WORD" == *"$LETTER"* ]]; then
