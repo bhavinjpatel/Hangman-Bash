@@ -247,14 +247,13 @@ letter_validation () {
 		echo "$LETTER is not a letter."
 		read -p "Enter letter: " LETTER
 	done
-	Guess="${Guess} ${LETTER}"
+	Guess="${Guess}${LETTER}"
 	Guess=$(echo "$Guess" | grep -o . | sort | tr -d "\n")
 }
 letter_contained () {
 	if [[ "$WORD" == *"$LETTER"* ]]; then
 		echo "$LETTER is in the word."
 		LETTERS="$LETTERS$LETTER"
-		python ./print_letters.py $WORD $LETTERS	
 		HAS_WON=$(python ./won.py $WORD $LETTERS)
 		if [[ "$HAS_WON" == "You won!" ]]; then
 			echo -e "\n\n"
@@ -265,38 +264,33 @@ letter_contained () {
 	else
 		let LIFECOUNT-=1
 		echo "$LETTER is not in the word"
-		let LETTERSLENGTH=${#LETTERS}
-		if [[ $LETTERSLENGTH -ne  0 ]]; then
-			python ./print_letters.py $WORD $LETTERS
-		else
-			python ./print_underscores.py $WORD
-		fi
 	fi
-	echo $Guess
 }
 letter_function () {
-	letter_validation
-	letter_contained
-}
-scene () {
-	if [[ $LIFECOUNT -eq 6 ]]; then
-		letter_function
-	elif [[ "$LIFECOUNT" -eq 5 ]]; then
+	if [[ "$LIFECOUNT" -eq 5 ]]; then
 		echo "$wrong1"
-		letter_function
 	elif [[ "$LIFECOUNT" -eq 4 ]]; then
 		echo "$wrong2"
-		letter_function
 	elif [[ "$LIFECOUNT" -eq 3 ]]; then
 		echo "$wrong3"
-		letter_function
 	elif [[ "$LIFECOUNT" -eq 2 ]]; then
 		echo "$wrong4"
-		letter_function
 	elif [[ "$LIFECOUNT" -eq 1 ]]; then
 		echo "$wrong5"
-		letter_function
+	fi	
+	let LETTERSLENGTH=${#LETTERS}
+	if [[ $LETTERSLENGTH -ne  0 ]]; then
+		python ./print_letters.py $WORD $LETTERS
+	else
+		python ./print_underscores.py $WORD
 	fi
+	echo "Characters guessed: $Guess"
+	letter_validation
+	letter_contained
+	echo
+}
+scene () {
+	letter_function
 }
 
 display_menus
