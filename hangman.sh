@@ -208,6 +208,13 @@ letter_contained () {
 		echo "$LETTER is in the word."
 		LETTERS="$LETTERS$LETTER"
 		python ./print_letters.py $WORD $LETTERS	
+		HAS_WON=$(python ./won.py $WORD $LETTERS)
+		if [[ "$HAS_WON" == "You won!" ]]; then
+			echo -e "\n\n"
+			cat assets/youwon.txt
+			echo -e "\n\nThe word was $WORD\nYou are being returned to the menu"
+			display_menus
+		fi
 	else
 		let LIFECOUNT-=1
 		echo "$LETTER is not in the word"
@@ -220,30 +227,28 @@ letter_contained () {
 	fi
 	echo $Guess
 }
+letter_function () {
+	letter_validation
+	letter_contained
+}
 scene () {
 	if [[ $LIFECOUNT -eq 6 ]]; then
-		letter_validation
-		letter_contained
+		letter_function
 	elif [[ "$LIFECOUNT" -eq 5 ]]; then
 		echo "$wrong1"
-		letter_validation
-		letter_contained
+		letter_function
 	elif [[ "$LIFECOUNT" -eq 4 ]]; then
 		echo "$wrong2"
-		letter_validation
-		letter_contained
+		letter_function
 	elif [[ "$LIFECOUNT" -eq 3 ]]; then
 		echo "$wrong3"
-		letter_validation
-		letter_contained
+		letter_function
 	elif [[ "$LIFECOUNT" -eq 2 ]]; then
 		echo "$wrong4"
-		letter_validation
-		letter_contained
+		letter_function
 	elif [[ "$LIFECOUNT" -eq 1 ]]; then
 		echo "$wrong5"
-		letter_validation
-		letter_contained
+		letter_function
 	fi
 }
 
