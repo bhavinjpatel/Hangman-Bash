@@ -153,8 +153,20 @@ done
 if [[ "$USEROPTION" -eq 1 ]]; then
 	play
 elif [[ "$USEROPTION" -eq 2 ]]; then
-	echo "Help Menu:
-	Guess the word."
+	echo "
+Help Menu:
+
+To play Hangman, press 1 on the main menu.
+You will be asked to select a difficulty.
+Easy difficulty will select a word from 1-5 letters.
+Medium difficulty will select a word from 6-10 letters.
+Hard difficulty will select a word greater than 11 letters.
+
+Synopsis:
+Hangman is a classic game.
+A word is selected and you will guess the letters within the word until you either win or lose.
+You have 6 chances to pick the correct letters or else you will perish!
+"
 	go_back
 elif [[ "$USEROPTION" -eq 3 ]]; then
 	echo "Project by: Bhavin Patel, Christian Santana, and Dylan Klintworth"
@@ -164,14 +176,49 @@ else
 	exit 1
 fi
 }
+choose_difficulty () {
+	echo -e "Please choose a difficulty:\n1) Easy (1-5 letters)\n2) Medium (6 - 10 letters)\n3) Hard (11+ letters)"
+	read DIFFICULTY
+	while [[ ! "$DIFFICULTY" =~ ^[1-3]{1}$ ]];
+	do
+		echo "$DIFFICULTY is not a valid option."
+		read -p "Please enter an option: " DIFFICULTY
+	done
+}
 play () {
 	LIFECOUNT=6
 	LETTERS=""
 	Guess=""
+	choose_difficulty
 	WORD=$(shuf ./assets/words.txt | head -n 1)
 	WORD=${WORD::-1}
-	echo "$Intro"
 	WORDLENGTH="${#WORD}"
+	if [[ "$DIFFICULTY" -eq 1 ]]; then
+		while [[ ! ("$WORDLENGTH" -ge 1 && "$WORDLENGTH" -le 5) ]];		
+		do
+			WORD=$(shuf ./assets/words.txt | head -n 1)
+			WORD=${WORD::-1}
+			WORDLENGTH="${#WORD}"
+		done
+		echo "$WORDLENGTH"
+	elif [[ "$DIFFICULTY" -eq 2 ]]; then
+		while [[ ! ("$WORDLENGTH" -ge 6 && "$WORDLENGTH" -le 10) ]];		
+		do
+			WORD=$(shuf ./assets/words.txt | head -n 1)
+			WORD=${WORD::-1}
+			WORDLENGTH="${#WORD}"
+		done
+		echo "$WORDLENGTH"
+	elif [[ "$DIFFICULTY" -eq 3 ]]; then
+		while [[ ! ("$WORDLENGTH" -ge 11) ]];		
+		do
+			WORD=$(shuf ./assets/words.txt | head -n 1)
+			WORD=${WORD::-1}
+			WORDLENGTH="${#WORD}"
+		done
+		echo "$WORDLENGTH"
+	fi
+	echo "$Intro"
 	echo -e "The word is $WORDLENGTH letters long...\nYou have"  $LIFECOUNT "chances"
 	while [[ "$LIFECOUNT" -gt 0 ]];
 	do
