@@ -116,19 +116,95 @@ wrong6="
 =========
 "
 Guesses=""
+Login_Menu_items=" 
+WELCOME TO HANGMAN!
+
+1) Login as existing user
+2) Create Account
+"
+LoginMenu (){
+echo "$Login_Menu_items"
+read -p "Please enter an option: " LoginOPTION
+
+while [[ ( -z "$LoginOPTION") || (! "$LoginOPTION" =~ ^[1-2]{1}$) ]];
+do
+        echo "$LoginOPTION is not a valid option."
+        echo "$LoginOPTIONS"
+        read -p "Please enter an option: " LoginOPTION
+done
+
+if [[ "$LoginOPTION" -eq 1 ]];
+then
+	validate_user
+elif [[ "$LoginOPTION" -eq 2 ]];
+then
+	Register_User
+fi
+}
+validate_user (){
+	read -p "Please enter your name: " name
+	while [[ (-z "$name") || (! "$name" =~ [:alpha:]) ]];
+	do
+		echo "$name is not valid. Name can only contain alphabets"
+		read -p "Please enter your name: " name
+	done
+
+	read -p "Please enter your pin: " pin
+	while [[ (-z "$pin") || (! $pin =~ ^[0-9]+$ ) ]];
+        do
+                echo "$pin is not valid. Pin can only contain digits"
+                read -p "Please enter your secret pin: " pin
+        done
+	if [[ -f ./assets/.user_data.out ]]; then
+		entry=$(grep $name ./assets/.user_data.out | grep $pin)
+		if ! test -z "$entry"
+		then
+			clear
+			display_menus
+		else
+			echo "Either user not registered or incorrect pin!"
+			LoginMenu
+		fi
+	else
+		echo "No user present in database!"
+		LoginMenu
+	fi
+}
+Register_User ()
+{
+        read -p "Please enter your name: " name
+        while [[ (-z "$name") || (! "$name" =~ [:alpha:]) ]];
+        do
+                echo "$name is not valid. Name can only contain alphabets"
+                read -p "Please enter your name: " name
+        done
+
+        read -p "Please enter a secret pin: " pin
+        while [[ (-z "$pin") ]] || [[ (! $pin =~ ^[0-9]+$ ) ]];
+        do
+                echo "$pin is not valid. Pin can only contain digit"
+                read -p "Please enter a secret pin: " pin
+        done
+	echo -e "\nHi $name, you have been registered successfully. Your secret pin is $pin. Please login to play the game!"
+	echo $name $pin >> ./assets/.user_data.out
+	echo ""
+	LoginMenu
+}
 USERMENU="
 Welcome, please select an option listed down below:
 
 1) Play Hangman
 2) Help
 3) Contribution Details
-4) Quit
+4) See Winners Board
+5) Quit
 "
 USEROPTIONS="
 1) Play Hangman
 2) Help
 3) Contribution Details
-4) Quit
+4) See Winners Board
+5) Quit
 "
 go_back () {
 	read -p "Enter 'gb' to go back: " GB
@@ -137,14 +213,25 @@ go_back () {
 		echo "$GB is not a valid entry."
 		read -p "Enter 'gb' to go back: " GB
 	done
+	clear
 	display_menus
 }
+winners_board (){
+clear
+cat ./assets/hangman.txt
+echo ""
+echo -e "NAME	Time to guess (sec) "
+cat ./assets/.winners_board.out | sort -nk 2 | head -5 | column -t
+read -p "Please press any key to go to main menu" input
+clear
+display_menus
+}
 display_menus () {
-
+cat ./assets/hangman.txt
 echo "$USERMENU"
 read -p "Please enter an option: " USEROPTION
 
-while [[ ( -z "$USEROPTION") || (! "$USEROPTION" =~ ^[1-4]{1}$) ]];
+while [[ ( -z "$USEROPTION") || (! "$USEROPTION" =~ ^[1-5]{1}$) ]];
 do
 	echo "$USEROPTION is not a valid option."
 	echo "$USEROPTIONS"
@@ -171,12 +258,16 @@ You have 6 chances to pick the correct letters or else you will perish!
 elif [[ "$USEROPTION" -eq 3 ]]; then
 	echo "Project by: Bhavin Patel, Christian Santana, and Dylan Klintworth"
 	go_back
+elif [[ "$USEROPTION" -eq 4 ]]; then
+	winners_board
 else
 	echo "Quitting Hangman"
 	exit 1
 fi
 }
 choose_difficulty () {
+	clear
+	cat ./assets/hangman.txt
 	echo -e "Please choose a difficulty:\n1) Easy (1-5 letters)\n2) Medium (6 - 10 letters)\n3) Hard (11+ letters)"
 	read DIFFICULTY
 	while [[ ! "$DIFFICULTY" =~ ^[1-3]{1}$ ]];
@@ -186,6 +277,7 @@ choose_difficulty () {
 	done
 }
 play () {
+	cat ./assets/hangman.txt
 	LIFECOUNT=6
 	LETTERS=""
 	Guess=""
@@ -218,14 +310,16 @@ play () {
 		done
 		echo "$WORDLENGTH"
 	fi
-	echo "$Intro"
-	echo -e "The word is $WORDLENGTH letters long...\nYou have"  $LIFECOUNT "chances"
+	date1=`date +%s`; 
+	while timer=true 
+	do
+	   	echo "$((`date +%s` - $date1))" > ./.timer.out
+       	done &
+	bgPID=$!;
 	while [[ "$LIFECOUNT" -gt 0 ]];
 	do
 		scene
 	done
-	echo "$wrong6"
-	echo "$LIFECOUNT lives. You lost! Word was: $WORD"
 	read -p "Play again? Enter y/n: " RESET
 	while [[ ( -z "$RESET" ) || (!( "$RESET" == "y" ||  "$RESET" == "n")) ]];
 	do
@@ -240,7 +334,6 @@ play () {
 
 }
 letter_validation () {
-	echo $WORD
 	read -p "Enter Letter: " LETTER
 	while [[ ! "$LETTER" =~ ^[A-Za-z]{1}$ ]]; 
 	do
@@ -256,9 +349,13 @@ letter_contained () {
 		LETTERS="$LETTERS$LETTER"
 		HAS_WON=$(python ./won.py $WORD $LETTERS)
 		if [[ "$HAS_WON" == "You won!" ]]; then
+			timer=false
 			echo -e "\n\n"
 			cat assets/youwon.txt
-			echo -e "\n\nThe word was $WORD\nYou are being returned to the menu"
+			echo -e "\n\nThe word was $WORD"
+			echo -e "\n\nYou guessed it in $(cat ./.timer.out) seconds\n\nYou are being returned to the menu"
+			echo $name $(cat ./.timer.out) >> ./assets/.winners_board.out
+			kill "$bgPID"
 			display_menus
 		fi
 	else
@@ -267,16 +364,33 @@ letter_contained () {
 	fi
 }
 letter_function () {
-	if [[ "$LIFECOUNT" -eq 5 ]]; then
+	clear
+	cat ./assets/hangman.txt
+	echo $WORD
+	echo $time
+	if [[ "$LIFECOUNT" -eq 6 ]]; then
+		echo "$Intro"
+		echo -e "The word is $WORDLENGTH letters long...\nYou have"  $LIFECOUNT "chances"
+	elif [[ "$LIFECOUNT" -eq 5 ]]; then
 		echo "$wrong1"
+		echo -e "The word is $WORDLENGTH letters long...\nYou have"  $LIFECOUNT "chances"
 	elif [[ "$LIFECOUNT" -eq 4 ]]; then
 		echo "$wrong2"
+		echo -e "The word is $WORDLENGTH letters long...\nYou have"  $LIFECOUNT "chances"
 	elif [[ "$LIFECOUNT" -eq 3 ]]; then
 		echo "$wrong3"
+		echo -e "The word is $WORDLENGTH letters long...\nYou have"  $LIFECOUNT "chances"
 	elif [[ "$LIFECOUNT" -eq 2 ]]; then
 		echo "$wrong4"
+		echo -e "The word is $WORDLENGTH letters long...\nYou have"  $LIFECOUNT "chances"
 	elif [[ "$LIFECOUNT" -eq 1 ]]; then
 		echo "$wrong5"
+		echo -e "The word is $WORDLENGTH letters long...\nYou have"  $LIFECOUNT "chances"
+	elif [[ "$LIFECOUNT" -eq 0 ]]; then
+		echo "$wrong6"
+        	echo "$LIFECOUNT lives. You lost! Word was: $WORD"
+		kill "$bgPID"
+		break
 	fi	
 	let LETTERSLENGTH=${#LETTERS}
 	if [[ $LETTERSLENGTH -ne  0 ]]; then
@@ -292,5 +406,5 @@ letter_function () {
 scene () {
 	letter_function
 }
-
-display_menus
+LoginMenu
+#display_menus
