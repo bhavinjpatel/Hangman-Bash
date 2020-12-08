@@ -324,7 +324,7 @@ play () {
 	   	echo "$((`date +%s` - $date1))" > ./.timer.out 
        	done &
 	bgPID=$!;
-	while [[ "$LIFECOUNT" -gt 0 ]];
+	while [[ "$LIFECOUNT" -ge 0 ]];
 	do
 		scene
 	done
@@ -396,8 +396,7 @@ letter_function () {
 	elif [[ "$LIFECOUNT" -eq 0 ]]; then
 		echo "$wrong6"
         	echo "$LIFECOUNT lives. You lost! Word was: $WORD"
-		kill "$bgPID"
-		break
+		let LIFECOUNT-=1
 	fi	
 	let LETTERSLENGTH=${#LETTERS}
 	if [[ $LETTERSLENGTH -ne  0 ]]; then
@@ -406,8 +405,10 @@ letter_function () {
 		python ./print_underscores.py $WORD
 	fi
 	echo "Characters guessed: $Guess"
+	if [[ $LIFECOUNT -ne -1 ]]; then
 	letter_validation
 	letter_contained
+	fi
 	echo
 }
 scene () {
