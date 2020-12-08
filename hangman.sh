@@ -148,7 +148,7 @@ validate_user (){
 	#validate name is valid
 	while [[ (-z "$name") || (! "$name" =~ ^[[:alpha:]]+$ ) ]];
 	do
-		echo "$name is not valid. Name can only contain alphabets"
+		echo "$name is not valid. Name can only contain letters."
 		read -p "Please enter your name: " name
 	done
 	
@@ -156,7 +156,7 @@ validate_user (){
 	#validate pin is valid
 	while [[ (-z "$pin") || ( ! $pin =~ ^[0-9]+$ ) ]];
         do
-                echo "$pin is not valid. Pin can only contain digits"
+                echo "$pin is not valid. Pin can only contain digits."
                 read -p "Please enter your secret pin: " pin
         done
 	if [[ -f ./assets/.user_data.out ]]; then #checks for user details in user_data
@@ -180,14 +180,14 @@ Register_User ()
 	#validates name
         while [[ (-z "$name") || ( ! "$name" =~ ^[[:alpha:]]+$ ) ]];
         do
-                echo "$name is not valid. Name can only contain alpha numeric characters."
+                echo "$name is not valid. Name can only contain letters."
                 read -p "Please enter your name: " name
         done
         read -p "Please enter a secret pin: " pin #get pin
 	#validate pin
         while [[ (-z "$pin") ]] || [[ (! $pin =~ ^[0-9]+$ ) ]];
         do
-                echo "$pin is not valid. Pin can only contain digit"
+                echo "$pin is not valid. Pin can only contain digits."
                 read -p "Please enter a secret pin: " pin
         done
 	echo -e "\nHi $name, you have been registered successfully. Your secret pin is $pin. Please login to play the game!"
@@ -369,7 +369,7 @@ letter_function () {
 	clear
 	cat ./assets/hangman.txt
 	echo "$WORD"
-	echo "$(( SECONDS - date1 ))"
+	echo "Second Count: $(( SECONDS - date1 ))"
 	if [[ "$LIFECOUNT" -eq 6 ]]; then
 		echo "$Intro"
 		echo -e "The word is $WORDLENGTH letters long...\nYou have"  $LIFECOUNT "chances"
@@ -391,7 +391,6 @@ letter_function () {
 	elif [[ "$LIFECOUNT" -eq 0 ]]; then
 		echo "$wrong6"
         	echo "$LIFECOUNT lives. You lost! Word was: $WORD"
-		kill "$bgPID"
 		break
 	fi	
 	let LETTERSLENGTH=${#LETTERS}
