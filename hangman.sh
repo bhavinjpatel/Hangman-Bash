@@ -318,12 +318,7 @@ play () {
 		done
 		echo "$WORDLENGTH"
 	fi
-	date1=`date +%s`; #get seconds since 1-1-1970
-	while timer=true 
-	do
-	   	echo "$((`date +%s` - $date1))" > ./.timer.out 
-       	done &
-	bgPID=$!;
+	date1=$SECONDS; #get seconds since 1-1-1970
 	while [[ "$LIFECOUNT" -gt 0 ]];
 	do
 		scene
@@ -357,13 +352,12 @@ letter_contained () {
 		LETTERS="$LETTERS$LETTER"
 		HAS_WON=$(python ./won.py $WORD $LETTERS)
 		if [[ "$HAS_WON" == "You won!" ]]; then
-			timer=false
 			echo -e "\n\n"
 			cat assets/youwon.txt
 			echo -e "\n\nThe word was $WORD"
-			echo -e "\n\nYou guessed it in $(cat ./.timer.out) seconds\n\nYou are being returned to the menu"
-			echo $name $(cat ./.timer.out) >> ./assets/.winners_board.out
-			kill "$bgPID"
+			DURATION=$(( SECONDS - date1 )) 
+			echo -e "\n\nYou guessed it in $DURATION seconds\n\nYou are being returned to the menu"
+			echo "$name $DURATION" >> ./assets/.winners_board.out
 			display_menus
 		fi
 	else
@@ -374,7 +368,8 @@ letter_contained () {
 letter_function () {
 	clear
 	cat ./assets/hangman.txt
-	echo $time
+	echo "$WORD"
+	echo "$(( SECONDS - date1 ))"
 	if [[ "$LIFECOUNT" -eq 6 ]]; then
 		echo "$Intro"
 		echo -e "The word is $WORDLENGTH letters long...\nYou have"  $LIFECOUNT "chances"
