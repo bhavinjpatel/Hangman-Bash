@@ -374,6 +374,7 @@ letter_contained () {
 letter_function () {
 	clear
 	cat ./assets/hangman.txt
+	echo $WORD
 	echo $time
 	if [[ "$LIFECOUNT" -eq 6 ]]; then
 		echo "$Intro"
