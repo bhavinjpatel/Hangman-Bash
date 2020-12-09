@@ -322,18 +322,8 @@ play () {
 		done
 		echo "$WORDLENGTH"
 	fi
-<<<<<<< HEAD
-	date1=`date +%s`; #get seconds since 1-1-1970
-	while timer=true 
-	do
-	   	echo "$((`date +%s` - $date1))" > ./.timer.out 
-       	done &
-	bgPID=$!;
-	while [[ "$LIFECOUNT" -ge 0 ]];
-=======
 	date1=$SECONDS; #get seconds since 1-1-1970
-	while [[ "$LIFECOUNT" -gt 0 ]];
->>>>>>> a51ca5341b5d48c843b5d77b29029117ba7d6113
+	while [[ "$LIFECOUNT" -ge 0 ]];
 	do
 		scene
 	done
@@ -406,11 +396,7 @@ letter_function () {
 	elif [[ "$LIFECOUNT" -eq 0 ]]; then
 		echo "$wrong6"
         	echo "$LIFECOUNT lives. You lost! Word was: $WORD"
-<<<<<<< HEAD
 		let LIFECOUNT-=1
-=======
-		break
->>>>>>> a51ca5341b5d48c843b5d77b29029117ba7d6113
 	fi	
 	let LETTERSLENGTH=${#LETTERS}
 	if [[ $LETTERSLENGTH -ne  0 ]]; then
