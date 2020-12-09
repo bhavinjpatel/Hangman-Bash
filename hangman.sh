@@ -148,7 +148,7 @@ validate_user (){
 	#validate name is valid
 	while [[ (-z "$name") || (! "$name" =~ ^[[:alpha:]]+$ ) ]];
 	do
-		echo "$name is not valid. Name can only contain alphabets"
+		echo "$name is not valid. Name can only contain letters."
 		read -p "Please enter your name: " name
 	done
 	
@@ -156,7 +156,7 @@ validate_user (){
 	#validate pin is valid
 	while [[ (-z "$pin") || ( ! $pin =~ ^[0-9]+$ ) ]];
         do
-                echo "$pin is not valid. Pin can only contain digits"
+                echo "$pin is not valid. Pin can only contain digits."
                 read -p "Please enter your secret pin: " pin
         done
 	if [[ -f ./assets/.user_data.out ]]; then #checks for user details in user_data
@@ -180,14 +180,14 @@ Register_User ()
 	#validates name
         while [[ (-z "$name") || ( ! "$name" =~ ^[[:alpha:]]+$ ) ]];
         do
-                echo "$name is not valid. Name can only contain alpha numeric characters."
+                echo "$name is not valid. Name can only contain letters."
                 read -p "Please enter your name: " name
         done
         read -p "Please enter a secret pin: " pin #get pin
 	#validate pin
         while [[ (-z "$pin") ]] || [[ (! $pin =~ ^[0-9]+$ ) ]];
         do
-                echo "$pin is not valid. Pin can only contain digit"
+                echo "$pin is not valid. Pin can only contain digits."
                 read -p "Please enter a secret pin: " pin
         done
 	echo -e "\nHi $name, you have been registered successfully. Your secret pin is $pin. Please login to play the game!"
@@ -223,6 +223,7 @@ go_back () {
 }
 winners_board (){
 	clear
+	if [[ -f ./assets/.winners_board.out ]]; then
 	cat ./assets/hangman.txt
 	echo ""
 	echo -e "NAME	Time to guess (sec) "
@@ -230,13 +231,16 @@ winners_board (){
 	read -p "Please press any key to go to main menu" input
 	clear
 	display_menus
+	else
+		echo -e "No one has won yet!\n\nReturning to Menus!"
+		display_menus
+	fi
 }
 display_menus () {
 	cat ./assets/hangman.txt #get hangman banner
 	echo "$USERMENU"
 	 #show menu and validate user options
 	read -p "Please enter an option: " USEROPTION
-
 	while [[ ( -z "$USEROPTION") || (! "$USEROPTION" =~ ^[1-5]{1}$) ]];
 	do
 		echo "$USEROPTION is not a valid option."
@@ -318,6 +322,7 @@ play () {
 		done
 		echo "$WORDLENGTH"
 	fi
+<<<<<<< HEAD
 	date1=`date +%s`; #get seconds since 1-1-1970
 	while timer=true 
 	do
@@ -325,6 +330,10 @@ play () {
        	done &
 	bgPID=$!;
 	while [[ "$LIFECOUNT" -ge 0 ]];
+=======
+	date1=$SECONDS; #get seconds since 1-1-1970
+	while [[ "$LIFECOUNT" -gt 0 ]];
+>>>>>>> a51ca5341b5d48c843b5d77b29029117ba7d6113
 	do
 		scene
 	done
@@ -357,13 +366,13 @@ letter_contained () {
 		LETTERS="$LETTERS$LETTER"
 		HAS_WON=$(python ./won.py $WORD $LETTERS)
 		if [[ "$HAS_WON" == "You won!" ]]; then
-			timer=false
+			clear
 			echo -e "\n\n"
 			cat assets/youwon.txt
 			echo -e "\n\nThe word was $WORD"
-			echo -e "\n\nYou guessed it in $(cat ./.timer.out) seconds\n\nYou are being returned to the menu"
-			echo $name $(cat ./.timer.out) >> ./assets/.winners_board.out
-			kill "$bgPID"
+			DURATION=$(( SECONDS - date1 )) 
+			echo -e "\n\nYou guessed it in $DURATION seconds\n\nYou are being returned to the menu"
+			echo "$name $DURATION" >> ./assets/.winners_board.out
 			display_menus
 		fi
 	else
@@ -374,7 +383,8 @@ letter_contained () {
 letter_function () {
 	clear
 	cat ./assets/hangman.txt
-	echo $time
+	echo "$WORD"
+	echo "Second Count: $(( SECONDS - date1 ))"
 	if [[ "$LIFECOUNT" -eq 6 ]]; then
 		echo "$Intro"
 		echo -e "The word is $WORDLENGTH letters long...\nYou have"  $LIFECOUNT "chances"
@@ -396,7 +406,11 @@ letter_function () {
 	elif [[ "$LIFECOUNT" -eq 0 ]]; then
 		echo "$wrong6"
         	echo "$LIFECOUNT lives. You lost! Word was: $WORD"
+<<<<<<< HEAD
 		let LIFECOUNT-=1
+=======
+		break
+>>>>>>> a51ca5341b5d48c843b5d77b29029117ba7d6113
 	fi	
 	let LETTERSLENGTH=${#LETTERS}
 	if [[ $LETTERSLENGTH -ne  0 ]]; then
