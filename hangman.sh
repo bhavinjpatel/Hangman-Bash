@@ -223,6 +223,7 @@ go_back () {
 }
 winners_board (){
 	clear
+	if [[ -f ./assets/.winners_board.out ]]; then
 	cat ./assets/hangman.txt
 	echo ""
 	echo -e "NAME	Time to guess (sec) "
@@ -230,13 +231,16 @@ winners_board (){
 	read -p "Please press any key to go to main menu" input
 	clear
 	display_menus
+	else
+		echo -e "No one has won yet!\n\nReturning to Menus!"
+		display_menus
+	fi
 }
 display_menus () {
 	cat ./assets/hangman.txt #get hangman banner
 	echo "$USERMENU"
 	 #show menu and validate user options
 	read -p "Please enter an option: " USEROPTION
-
 	while [[ ( -z "$USEROPTION") || (! "$USEROPTION" =~ ^[1-5]{1}$) ]];
 	do
 		echo "$USEROPTION is not a valid option."
@@ -352,6 +356,7 @@ letter_contained () {
 		LETTERS="$LETTERS$LETTER"
 		HAS_WON=$(python ./won.py $WORD $LETTERS)
 		if [[ "$HAS_WON" == "You won!" ]]; then
+			clear
 			echo -e "\n\n"
 			cat assets/youwon.txt
 			echo -e "\n\nThe word was $WORD"
