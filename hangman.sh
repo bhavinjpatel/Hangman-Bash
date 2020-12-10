@@ -211,31 +211,8 @@ USEROPTIONS="
 4) See Winners Board
 5) Quit
 "
-go_back () {
-	read -p "Enter 'gb' to go back: " GB
-	while [[ ( -z "$GB" ) || (! "$GB" =~ ^gb$) ]];
-	do
-		echo "$GB is not a valid entry."
-		read -p "Enter 'gb' to go back: " GB
-	done
-	clear
-	display_menus
-}
-winners_board (){
-	clear
-	if [[ -f ./assets/.winners_board.out ]]; then
-	cat ./assets/hangman.txt
-	echo ""
-	echo -e "NAME	Time to guess (sec) "
-	cat ./assets/.winners_board.out | sort -nk 2 | head -5 | column -t
-	read -p "Please press any key to go to main menu" input
-	clear
-	display_menus
-	else
-		echo -e "No one has won yet!\n\nReturning to Menus!"
-		display_menus
-	fi
-}
+
+
 display_menus () {
 	cat ./assets/hangman.txt #get hangman banner
 	echo "$USERMENU"
@@ -264,10 +241,15 @@ Hangman is a classic game.
 A word is selected and you will guess the letters within the word until you either win or lose.
 You have 6 chances to pick the correct letters or else you will perish!
 "
-		go_back
+	read -p "Please press any key to go to main menu" input
+	clear
+	display_menus
 	elif [[ "$USEROPTION" -eq 3 ]]; then #show project contributors if option 3
-		echo "Project by: Bhavin Patel, Christian Santana, and Dylan Klintworth"
-		go_back
+		echo "Project by: Bhavin Patel, Christian Santana, and Dylan Klintworth 
+		"
+	read -p "Please press any key to go to main menu" input
+	clear
+	display_menus
 	elif [[ "$USEROPTION" -eq 4 ]]; then #show winner board if option 4
 		winners_board
 	else
@@ -275,6 +257,24 @@ You have 6 chances to pick the correct letters or else you will perish!
 		exit 1
 	fi
 }
+
+winners_board (){
+	clear
+	if [[ -f ./assets/.winners_board.out ]]; then
+	cat ./assets/hangman.txt
+	echo ""
+	echo -e "NAME	Time to guess (sec) "
+	cat ./assets/.winners_board.out | sort -nk 2 | head -5 | column -t
+	read -p " 
+	Please press any key to go to main menu" input
+	clear
+	display_menus
+	else
+		echo -e "No one has won yet!\n\nReturning to Menus!"
+		display_menus
+	fi
+}
+
 choose_difficulty () {
 	clear
 	cat ./assets/hangman.txt
@@ -287,6 +287,7 @@ choose_difficulty () {
 		read -p "Please enter an option: " DIFFICULTY
 	done
 }
+
 play () {
 	#show banner
 	cat ./assets/hangman.txt
